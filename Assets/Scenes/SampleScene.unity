@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 19284813}
   m_Layer: 0
   m_Name: Borde
-  m_TagString: Untagged
+  m_TagString: Borde
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -260,10 +260,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -8.427809, y: 7.9262104}
-      - {x: -8.444775, y: -6.6343575}
-      - {x: 15.52853, y: -6.6923337}
-      - {x: 15.42263, y: 7.7970204}
+    - - {x: -8.133133, y: 10.185394}
+      - {x: -8.150099, y: -7.5183873}
+      - {x: 17.394814, y: -7.4781375}
+      - {x: 17.87827, y: 10.056204}
 --- !u!4 &19284814
 Transform:
   m_ObjectHideFlags: 0
@@ -793,12 +793,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7930b107617c99444aa66b6d5e52e096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radio: 5
-  velocidad: 2
-  proyectil: {fileID: 1690645874154854613, guid: 0d643af0b7e610849b9b7ffca5e04240, type: 3}
-  velocidadProyectil: 10
-  actualcooldown: 10
-  jugador: {fileID: 1273751148}
+  radioDeteccion: 5
+  proyectilPrefab: {fileID: 1690645874154854613, guid: 0d643af0b7e610849b9b7ffca5e04240, type: 3}
+  puntoDisparo: {fileID: 445670370}
+  tiempoEntreDisparos: 5
 --- !u!58 &445670374
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -815,6 +813,37 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 6
+--- !u!1 &506677887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 506677888}
+  m_Layer: 0
+  m_Name: PuntoFuego
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &506677888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506677887}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.435, y: -0.87, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1273751152}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,7 +1420,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976949840}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6, y: 3.5, z: 0}
+  m_LocalPosition: {x: -6.05, y: 3.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2086,6 +2115,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1555728123}
+  - {fileID: 506677888}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2107,9 +2137,10 @@ MonoBehaviour:
   animatorController: {fileID: 1273751149}
   spriteRenderer: {fileID: 1273751151}
   bulletPrefab: {fileID: 1690645874154854613, guid: 0d643af0b7e610849b9b7ffca5e04240, type: 3}
-  firePoint: {fileID: 1273751152}
+  firePoint: {fileID: 506677888}
   bulletSpeed: 10
   fireRate: 0.5
+  fireTimer: 0
 --- !u!50 &1273751154
 Rigidbody2D:
   serializedVersion: 4
@@ -2421,14 +2452,13 @@ MonoBehaviour:
   - {fileID: 214855221}
   - {fileID: 1916924447}
   - {fileID: 1045048988}
-  myRBD2: {fileID: 1551197674}
+  myRBD2: {fileID: 527771334}
   animatorController: {fileID: 1551197673}
   spriteRenderer: {fileID: 1551197671}
-  velocityModifier: 1.25
-  raycastRange: 5
-  obstacleLayer:
+  velocityModifier: 5
+  playerLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
 --- !u!1 &1555728122
 GameObject:
   m_ObjectHideFlags: 0
@@ -2790,9 +2820,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efcd4869e3d98044cb40165d75c03812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radio: 3
-  velocidad: 2
-  jugador: {fileID: 1273751148}
+  velocidadMovimiento: 2
+  radioDeteccion: 5
 --- !u!58 &1694046252
 CircleCollider2D:
   m_ObjectHideFlags: 0

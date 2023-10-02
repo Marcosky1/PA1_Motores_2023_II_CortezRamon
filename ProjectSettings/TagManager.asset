@@ -7,6 +7,7 @@ TagManager:
   - PuntoA
   - PuntoB
   - Ground
+  - Borde
   layers:
   - Default
   - TransparentFX
