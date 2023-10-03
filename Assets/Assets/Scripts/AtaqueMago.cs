@@ -7,7 +7,7 @@ public class AtaqueMago : MonoBehaviour
     public float radioDeteccion = 5.0f; // Radio de detección del jugador.
     public GameObject proyectilPrefab; // Prefab del proyectil a disparar.
     public Transform puntoDisparo; // Punto de origen del disparo.
-    public float tiempoEntreDisparos = 5.0f; // Tiempo entre disparos en segundos.
+    public float tiempoEntreDisparos = 2.0f; // Tiempo entre disparos en segundos.
 
     private Transform jugador; // Referencia al transform del jugador.
     private bool jugadorDetectado = false; // Indica si el jugador ha sido detectado.
@@ -15,15 +15,7 @@ public class AtaqueMago : MonoBehaviour
 
     void Start()
     {
-        // Encuentra al jugador por su etiqueta (asegúrate de etiquetar al jugador como "Player").
         jugador = GameObject.FindGameObjectWithTag("Player").transform;
-
-        if (jugador == null)
-        {
-            Debug.LogError("No se encontró al jugador. Asegúrate de etiquetar al jugador como 'Player'.");
-        }
-
-        // Inicializa el tiempo del último disparo.
         tiempoUltimoDisparo = Time.time;
     }
 

@@ -8,6 +8,9 @@ TagManager:
   - PuntoB
   - Ground
   - Borde
+  - Enemigo1
+  - Enemigo2
+  - Enemigo
   layers:
   - Default
   - TransparentFX
