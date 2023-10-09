@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class AtaqueOgro : MonoBehaviour
 {
-    public float velocidadMovimiento = 2.0f; // Velocidad de movimiento del ogro.
-    public float radioDeteccion = 5.0f; // Radio de detección del jugador.
+    public float velocidadMovimiento = 2.0f; 
+    public float radioDeteccion = 5.0f;
 
-    private Transform jugador; // Referencia al transform del jugador.
+    private Transform jugador; 
     private bool jugadorDetectado = false; // Indica si el jugador ha sido detectado.
+
+    public PlayerController playerController;
 
     private void Start()
     {
@@ -27,29 +29,29 @@ public class AtaqueOgro : MonoBehaviour
             return;
         }
 
-        // Calcula la distancia entre el ogro y el jugador.
         float distanciaAlJugador = Vector2.Distance(transform.position, jugador.position);
 
-        // Si el jugador está dentro del radio de detección, sigue al jugador.
         if (distanciaAlJugador <= radioDeteccion)
         {
             jugadorDetectado = true;
 
-            // Calcula la dirección hacia el jugador.
             Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
 
-            // Mueve al ogro hacia el jugador.
             transform.Translate(direccionAlJugador * velocidadMovimiento * Time.deltaTime);
         }
         else
         {
             jugadorDetectado = false;
         }
+
+        if (playerController != null)
+        {
+            float velocidadJugador = playerController.velocityModifier;
+        }
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Dibuja un gizmo esférico para visualizar el radio de detección en el editor.
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, radioDeteccion);
     }

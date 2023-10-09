@@ -6,18 +6,17 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D myRBD2;
-    [SerializeField] private float velocityModifier = 5f;
+    [SerializeField] public float velocityModifier = 5f;
     [SerializeField] private float rayDistance = 10f;
     [SerializeField] private AnimatorController animatorController;
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private GameObject bulletPrefab; // el prefab de la bala
+    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform firePoint; // el punto de disparo
-    [SerializeField] private float bulletSpeed = 10f; // la velocidad de la bala
+    [SerializeField] private float bulletSpeed = 10f; 
     [SerializeField] private float fireRate = 0.5f; // la tasa de fuego
 
-    public Text healthText;
-
     //vida 
+    public Text healthText;
     public int maxHealth = 100;
     private int currentHealth;
 
@@ -27,8 +26,24 @@ public class PlayerController : MonoBehaviour
     private int nivel = 1; 
     private int puntaje = 0;
 
+    private int tiempoDeVidaBala = 5;
 
     private float fireTimer; // el temporizador de fuego
+
+    public static PlayerController Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
 
     private void Start()
     {
@@ -61,14 +76,13 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Debug.Log("Right Click");
-            Disparar(); // llamar al m�todo de disparo
+            Disparar(); 
         }
         else if (Input.GetMouseButtonDown(1))
         {
             Debug.Log("Left Click");
         }
 
-        // actualizar el temporizador de fuego
         fireTimer -= Time.deltaTime;
 
         healthText.text = "Vida: " + currentHealth;
@@ -79,20 +93,42 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.flipX = (x_Position - transform.position.x) < 0;
     }
 
-    // el m�todo de disparo
     private void Disparar()
     {
-        // comprobar si el temporizador de fuego es menor o igual a cero
         if (fireTimer <= 0)
         {
-            // instanciar el prefab de la bala en el punto de disparo
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-            // aplicar una fuerza a la bala en la direcci�n del punto de disparo
-            rb.AddForce(firePoint.up * bulletSpeed, ForceMode2D.Impulse);
-            // reiniciar el temporizador de fuego
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, rayDistance);
+            Vector2 initialPosition = transform.position;
+
+            if (hit.collider != null)
+            {
+                Vector2 impactPoint = hit.point;
+                Vector2 direction = (impactPoint - initialPosition).normalized;
+                GameObject bullet = Instantiate(bulletPrefab, initialPosition, Quaternion.identity);
+                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+
+                rb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
+
+                StartCoroutine(DestruirBala(bullet, tiempoDeVidaBala));
+            }
+            else
+            {
+                GameObject bullet = Instantiate(bulletPrefab, initialPosition, Quaternion.identity);
+                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+
+                rb.AddForce(transform.up * bulletSpeed, ForceMode2D.Impulse);
+
+                StartCoroutine(DestruirBala(bullet, tiempoDeVidaBala));
+            }
+
             fireTimer = fireRate;
         }
+    }
+
+    private IEnumerator DestruirBala(GameObject bullet, float tiempoDeVida)
+    {
+        yield return new WaitForSeconds(tiempoDeVida);
+        Destroy(bullet);
     }
 
     public void TakeDamage(int damage)
@@ -106,31 +142,36 @@ public class PlayerController : MonoBehaviour
 
     private void DerrotarEnemigo(GameObject enemigo)
     {
-        // Supongamos que tienes una manera de determinar si un enemigo es de tipo 1 o 2.
         int tipoEnemigo = DetermineTipoEnemigo(enemigo);
 
         if (tipoEnemigo == 1)
         {
-            puntaje += 10; // Enemigo tipo 1 otorga 10 puntos.
+            puntaje += 10; 
         }
         else if (tipoEnemigo == 2)
         {
-            puntaje += 20; // Enemigo tipo 2 otorga 20 puntos.
+            puntaje += 20; 
         }
 
         ActualizarNivel();
         Destroy(enemigo);
     }
 
+    private IEnumerator ActualizarNivelCoroutine()
+    {
+        while (true) 
+        {
+            yield return new WaitForSeconds(20f); 
+            nivel += 10; 
+            nivelText.text = "Nivel: " + nivel;
+        }
+    }
+
+
+
     private void ActualizarNivel()
     {
-
-        if (puntaje % 100 == 0)
-        {
-            nivel++;
-        }
-
-        nivelText.text = "Nivel: " + nivel;
+        StartCoroutine(ActualizarNivelCoroutine());
     }
     private int DetermineTipoEnemigo(GameObject enemigo)
     {
@@ -142,8 +183,10 @@ public class PlayerController : MonoBehaviour
         {
             return 2;
         }
+
         return 0;
     }
 
 
 }
+

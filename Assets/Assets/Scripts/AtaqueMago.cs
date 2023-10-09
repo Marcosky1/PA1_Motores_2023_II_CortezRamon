@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class AtaqueMago : MonoBehaviour
 {
-    public float radioDeteccion = 5.0f; // Radio de detección del jugador.
-    public GameObject proyectilPrefab; // Prefab del proyectil a disparar.
-    public Transform puntoDisparo; // Punto de origen del disparo.
-    public float tiempoEntreDisparos = 2.0f; // Tiempo entre disparos en segundos.
+    public float radioDeteccion = 5.0f;
+    public GameObject proyectilPrefab;
+    public Transform puntoDisparo;
+    public float tiempoEntreDisparos = 5.0f;
+    public float velocidadProyectil = 10.0f;
+    public float tiempoDeVidaBala = 5.0f;
 
-    private Transform jugador; // Referencia al transform del jugador.
-    private bool jugadorDetectado = false; // Indica si el jugador ha sido detectado.
-    private float tiempoUltimoDisparo; // Tiempo del último disparo.
+    private Transform jugador;
+    private bool jugadorDetectado = false;
+    private float tiempoUltimoDisparo;
+    private Vector2 ultimaDireccionDisparo;
+
+    public PlayerController playerController;
 
     void Start()
     {
@@ -21,47 +26,52 @@ public class AtaqueMago : MonoBehaviour
 
     void Update()
     {
-        if (jugador == null)
-        {
-            return;
-        }
-
-        // Calcula la distancia entre el mago y el jugador.
+       
         float distanciaAlJugador = Vector2.Distance(transform.position, jugador.position);
 
-        // Si el jugador está dentro del radio de detección y ha pasado suficiente tiempo, dispara.
         if (distanciaAlJugador <= radioDeteccion && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
         {
             jugadorDetectado = true;
+            ultimaDireccionDisparo = (jugador.position - puntoDisparo.position).normalized;
             Disparar();
-            tiempoUltimoDisparo = Time.time; // Actualiza el tiempo del último disparo.
+            tiempoUltimoDisparo = Time.time;
         }
         else
         {
             jugadorDetectado = false;
         }
+
+        if (playerController != null)
+        {
+            float velocidadJugador = playerController.velocityModifier;
+        }
     }
 
     void Disparar()
     {
-        // Comprueba si se ha asignado un prefab de proyectil y un punto de disparo.
         if (proyectilPrefab != null && puntoDisparo != null)
         {
-            // Calcula la dirección hacia el jugador.
             Vector2 direccion = (jugador.position - puntoDisparo.position).normalized;
+            float angulo = Mathf.Atan2(direccion.y, direccion.x);
+            GameObject proyectil = Instantiate(proyectilPrefab, puntoDisparo.position, Quaternion.identity);
+            Rigidbody2D rb = proyectil.GetComponent<Rigidbody2D>();
+            Vector2 velocidad = new Vector2(Mathf.Cos(angulo), Mathf.Sin(angulo)) * velocidadProyectil;
+            rb.velocity = velocidad;
 
-            // Calcula el ángulo de rotación basado en la dirección.
-            float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
-
-            // Instancia un proyectil en el punto de disparo con la dirección adecuada.
-            GameObject proyectil = Instantiate(proyectilPrefab, puntoDisparo.position, Quaternion.Euler(0, 0, angulo));
+            StartCoroutine(DestruirBala(proyectil, tiempoDeVidaBala));
         }
+    }
+
+    private IEnumerator DestruirBala(GameObject bala, float tiempoDeVida)
+    {
+        yield return new WaitForSeconds(tiempoDeVida);
+        Destroy(bala);
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Dibuja un gizmo esférico para visualizar el radio de detección en el editor.
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, radioDeteccion);
     }
 }
+
