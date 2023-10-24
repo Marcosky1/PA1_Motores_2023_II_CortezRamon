@@ -13,7 +13,7 @@ public class AtaqueMago : MonoBehaviour
 
     private Transform jugador;
     private bool jugadorDetectado = false;
-    private float tiempoUltimoDisparo;
+    private float tiempoUltimoDisparo = 5.0f;
     private Vector2 ultimaDireccionDisparo;
 
     public PlayerController playerController;
