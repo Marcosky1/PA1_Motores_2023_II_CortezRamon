@@ -8,7 +8,6 @@ public class AtaqueOgro : MonoBehaviour
     public float radioDeteccion = 5.0f;
 
     private Transform jugador; 
-    private bool jugadorDetectado = false; // Indica si el jugador ha sido detectado.
 
     public PlayerController playerController;
 
@@ -33,15 +32,10 @@ public class AtaqueOgro : MonoBehaviour
 
         if (distanciaAlJugador <= radioDeteccion)
         {
-            jugadorDetectado = true;
 
             Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
 
             transform.Translate(direccionAlJugador * velocidadMovimiento * Time.deltaTime);
-        }
-        else
-        {
-            jugadorDetectado = false;
         }
 
         if (playerController != null)
