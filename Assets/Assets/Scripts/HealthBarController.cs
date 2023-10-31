@@ -24,7 +24,7 @@ public class HealthBarController : MonoBehaviour
     /// <summary>
     /// Metodo <c>UpdateHealth</c> actualiza la vida del personaje de manera visual. Recibe una cantidad de vida modificada.
     /// </summary>
-    /// <param name="amount">El valor de vida modificada.</param>
+    /// <param <name="amount">El valor de vida modificada.</param>
     public void UpdateHealth(int amount){
         currentValue = Mathf.Clamp(currentValue + amount, 0, maxValue);
 
