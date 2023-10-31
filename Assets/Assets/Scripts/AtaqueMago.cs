@@ -12,6 +12,7 @@ public class AtaqueMago : MonoBehaviour
     public float tiempoDeVidaBala = 5.0f;
 
     private Transform jugador;
+    private bool jugadorDetectado = false;
     private float tiempoUltimoDisparo = 5.0f;
     private Vector2 ultimaDireccionDisparo;
 
@@ -30,10 +31,16 @@ public class AtaqueMago : MonoBehaviour
 
         if (distanciaAlJugador <= radioDeteccion && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
         {
+            jugadorDetectado = true;
             ultimaDireccionDisparo = (jugador.position - puntoDisparo.position).normalized;
             Disparar();
             tiempoUltimoDisparo = Time.time;
         }
+        else
+        {
+            jugadorDetectado = false;
+        }
+
         if (playerController != null)
         {
             float velocidadJugador = playerController.velocityModifier;
